@@ -1,0 +1,11 @@
+# Improve readability of game outputs (DONE)
+# Update Welcome text (DONE)
+# Add options to read game story(DONE)
+# Once Game session is done, ask user if they want to play another round or quit DONE
+# When they quit say their name and thank them for playing(DONE)
+# if new user, dont say welcome back, just welcome them DONE
+# ----------------
+# Finalize gamestory and add to game(DONE)
+# Finisg requirments doc
+# Code freeze - test and list bugs
+# Prepare presentation
