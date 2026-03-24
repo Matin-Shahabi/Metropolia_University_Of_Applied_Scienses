@@ -70,7 +70,7 @@ electric_car_1 = ElectricCar("ABC-15",180,52.5)
 gasoline_car_1 = GasolineCar("ACD-123",165,32.3)
 
 electric_car_1.accelerate(100)
-gasoline_car_1.drive(120)
+gasoline_car_1.accelerate(120)
 electric_car_1.drive(3)
 gasoline_car_1.drive(3)
 print(f"Electric car : {electric_car_1.registration_number} distance : {electric_car_1.odometer}")
