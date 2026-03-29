@@ -5,7 +5,7 @@ This is all of the Project &amp; Exercises of My university in the ICT major.
 
 
 # Html & Css Assignment
-## website
+## Mati Shop
 
 ### result screenshots
 - [results.html](python/website/results.html)
