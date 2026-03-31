@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+<!--    way 1 : (write js codes here)-->
+    <script>
+        'use strict';
+        console.log('Hello World from JavaScript');
+        alert('Caution ! Battery is Extremely low');
+        let x = "2";
+        const y = 3;
+        console.log(typeof x);
+        console.log("the value of x is " + x);
+        console.log('the value of y is ' + y);
+        let z = +x
+        console.log(typeof z);
+        let b = "12.23"
+        let w = parseFloat(b);
+        console.log(typeof w);
+        console.log("sum of x,y is : " + (x + y));
+        let d,g
+        d = prompt('Enter first number');
+        g = parseInt(prompt('Enter second number'));
+        console.log("the sum of d,g is : " + (d + g));
+        const gstr = g.toString();
+        console.log(typeof gstr);
+        let first_name,last_name;
+        first_name = prompt('Enter first name');
+        last_name = prompt('Enter last name');
+        const greet = `Hello ${first_name}`;
+        console.log(first_name +" "+ last_name);
+        console.log(greet);
+        let u = 10;
+        let o = ++u;
+        console.log(o)
+        let p = --u
+        console.log(p);
+        u *= 2
+        u /= 2
+        u += 5
+        u -= 5
+        u++
+        u--
+        console.log(u);
+        console.log(Math.sqrt(100));
+        console.log(Math.random());
+        console.log(Math.abs(-18))
+        console.log(Math.cos(0))
+    </script>
+
+<!--    way 2 : (create js file and write the js code in that file)-->
+<!--    <script src="practice_with_html.js" defer></script>-->
+</head>
+<body>
+    <h1>Hello World</h1>
+    <p id = "target"></p>
+<script>
+    'use strict';
+    const name = "Matin";
+    document.querySelector('#target').innerHTML = 'Good Morning ' + name + '!';
+    const age = prompt('Enter your age : ');
+    if (age > 18){
+        console.log(`Welcome ${first_name} ${last_name}!`);
+        console.log("You are Adult");
+    }else if (age <= 18){
+        console.log(`Welcome Dear ${first_name} ${last_name}!`);
+        console.log("You are a Baby : )")
+    }
+
+    let h = prompt('Enter your number : ');
+    if (h > 0){
+        console.log("Your number is Positive")
+    }else if (h < 0){
+        console.log("Your number is Negative")
+    }else{
+        console.log("Your number is Zero")
+    }
+</script>
+</body>
+</html>
