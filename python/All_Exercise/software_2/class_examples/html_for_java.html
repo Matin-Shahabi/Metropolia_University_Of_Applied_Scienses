@@ -4,50 +4,50 @@
     <meta charset="UTF-8">
     <title>Title</title>
 <!--    way 1 : (write js codes here)-->
-    <script>
-        'use strict';
-        console.log('Hello World from JavaScript');
-        alert('Caution ! Battery is Extremely low');
-        let x = "2";
-        const y = 3;
-        console.log(typeof x);
-        console.log("the value of x is " + x);
-        console.log('the value of y is ' + y);
-        let z = +x
-        console.log(typeof z);
-        let b = "12.23"
-        let w = parseFloat(b);
-        console.log(typeof w);
-        console.log("sum of x,y is : " + (x + y));
-        let d,g
-        d = prompt('Enter first number');
-        g = parseInt(prompt('Enter second number'));
-        console.log("the sum of d,g is : " + (d + g));
-        const gstr = g.toString();
-        console.log(typeof gstr);
-        let first_name,last_name;
-        first_name = prompt('Enter first name');
-        last_name = prompt('Enter last name');
-        const greet = `Hello ${first_name}`;
-        console.log(first_name +" "+ last_name);
-        console.log(greet);
-        let u = 10;
-        let o = ++u;
-        console.log(o)
-        let p = --u
-        console.log(p);
-        u *= 2
-        u /= 2
-        u += 5
-        u -= 5
-        u++
-        u--
-        console.log(u);
-        console.log(Math.sqrt(100));
-        console.log(Math.random());
-        console.log(Math.abs(-18))
-        console.log(Math.cos(0))
-    </script>
+<!--    <script>-->
+<!--        'use strict';-->
+<!--        console.log('Hello World from JavaScript');-->
+<!--        alert('Caution ! Battery is Extremely low');-->
+<!--        let x = "2";-->
+<!--        const y = 3;-->
+<!--        console.log(typeof x);-->
+<!--        console.log("the value of x is " + x);-->
+<!--        console.log('the value of y is ' + y);-->
+<!--        let z = +x-->
+<!--        console.log(typeof z);-->
+<!--        let b = "12.23"-->
+<!--        let w = parseFloat(b);-->
+<!--        console.log(typeof w);-->
+<!--        console.log("sum of x,y is : " + (x + y));-->
+<!--        let d,g-->
+<!--        d = prompt('Enter first number');-->
+<!--        g = parseInt(prompt('Enter second number'));-->
+<!--        console.log("the sum of d,g is : " + (d + g));-->
+<!--        const gstr = g.toString();-->
+<!--        console.log(typeof gstr);-->
+<!--        let first_name,last_name;-->
+<!--        first_name = prompt('Enter first name');-->
+<!--        last_name = prompt('Enter last name');-->
+<!--        const greet = `Hello ${first_name}`;-->
+<!--        console.log(first_name +" "+ last_name);-->
+<!--        console.log(greet);-->
+<!--        let u = 10;-->
+<!--        let o = ++u;-->
+<!--        console.log(o)-->
+<!--        let p = &#45;&#45;u-->
+<!--        console.log(p);-->
+<!--        u *= 2-->
+<!--        u /= 2-->
+<!--        u += 5-->
+<!--        u -= 5-->
+<!--        u++-->
+<!--        u&#45;&#45;-->
+<!--        console.log(u);-->
+<!--        console.log(Math.sqrt(100));-->
+<!--        console.log(Math.random());-->
+<!--        console.log(Math.abs(-18))-->
+<!--        console.log(Math.cos(0))-->
+<!--    </script>-->
 
 <!--    way 2 : (create js file and write the js code in that file)-->
 <!--    <script src="practice_with_html.js" defer></script>-->
@@ -57,25 +57,149 @@
     <p id = "target"></p>
 <script>
     'use strict';
-    const name = "Matin";
-    document.querySelector('#target').innerHTML = 'Good Morning ' + name + '!';
-    const age = prompt('Enter your age : ');
-    if (age > 18){
-        console.log(`Welcome ${first_name} ${last_name}!`);
-        console.log("You are Adult");
-    }else if (age <= 18){
-        console.log(`Welcome Dear ${first_name} ${last_name}!`);
-        console.log("You are a Baby : )")
+    // const name = "Matin";
+    // document.querySelector('#target').innerHTML = 'Good Morning ' + name + '!';
+    // const age = prompt('Enter your age : ');
+    // if (age > 18){
+    //     console.log(`Welcome ${first_name} ${last_name}!`);
+    //     console.log("You are Adult");
+    // }else if (age <= 18){
+    //     console.log(`Welcome Dear ${first_name} ${last_name}!`);
+    //     console.log("You are a Baby : )")
+    // }
+    //
+    // let h = prompt('Enter your number : ');
+    // if (h > 0){
+    //     console.log("Your number is Positive")
+    // }else if (h < 0){
+    //     console.log("Your number is Negative")
+    // }else{
+    //     console.log("Your number is Zero")
+    // }
+
+
+
+    // Example 2
+
+
+    // let x,y;
+    // x = prompt('Are you Citizen ? (Yes, No )');
+    // y = prompt("Enter your age : ")
+    // if (x === "Yes" && y >= 18){
+    //     alert("Accepted, you are an adult citizen");
+    // }else if (x === "Yes" && y < 18){
+    //     alert("You are an underage citizen");
+    // }else {
+    //     alert(" Rejected , you are not a citizen");
+    // }
+
+
+
+    // let x,y;
+    // x = prompt('Are you Citizen ? (Yes, No )');
+    // if (x.toLowerCase() === "yes"){
+    //     y = prompt("Enter your age : ")
+    //     if (y >= 18){
+    //         alert("You are an Adult citizen");
+    //     }else if (1 <= y < 18){
+    //         alert("You are an underage citizen");
+    //     }else{
+    //         alert("Wrong number for age");
+    //     }
+    // }else if (x.toLowerCase() === "no"){
+    //     alert("You are not a citizen");
+    // }else{
+    //     alert("Wrong input");
+    // }
+
+
+
+    // nested if
+
+    // let x = prompt("Enter your age : ")
+    // if (x >= 12){
+    //     alert("The dose will be 500 micrograms")
+    // }else if ( 2 <= x && x < 12){
+    //     let weight = parseInt(prompt("Enter your weight: "));
+    //     let microgram = weight * 12.5
+    //     if (microgram >= 500){
+    //         alert("The dose will be 500 micrograms")
+    //     }else {
+    //         alert(`The dose will be ${microgram} micrograms`)
+    //     }
+    // }else {
+    //     alert("Do not give them any dose")
+    // }
+
+
+
+
+    // switch case
+
+    // const number = parseInt(prompt("Enter a number : "))
+    // switch (number){
+    //     case 1 :
+    //         alert("This is Monday");
+    //         break;
+    //     case 2 :
+    //         alert("this is Tuesday");
+    //         break;
+    //     case 3 :
+    //         alert("this is Wednesday");
+    //         break;
+    //     case 4 :
+    //         alert("this is Thursday");
+    //         break;
+    //     case 5 :
+    //         alert("this is Friday");
+    //         break;
+    //     case 6 :
+    //         alert("this is Saturday");
+    //         break;
+    //     case 7 :
+    //         alert("this is Sunday");
+    //         break;
+    //     default :
+    //         alert("Enter a number between 1 - 7");
+    // }
+
+
+
+    // while
+
+    // let heads = 0 , tails = 0 ;
+    // while (heads + tails < 100){
+    //     const r = Math.random();
+    //     if(r > 0.5)
+    //         heads++;
+    //     else
+    //         tails++;
+    // }
+    // console.log("Heads :" + heads + ', Tails :' + tails)
+    //
+    //
+    //
+    // // do while
+    //
+    // let result;
+    // do{
+    //     result = Math.floor(Math.random()*6)+1;
+    //     console.log(result)
+    // }while(result < 6);
+
+
+
+    // for loop
+    for ( let i = 1 ;i <= 10 ; i++){
+        console.log(i)
     }
 
-    let h = prompt('Enter your number : ');
-    if (h > 0){
-        console.log("Your number is Positive")
-    }else if (h < 0){
-        console.log("Your number is Negative")
-    }else{
-        console.log("Your number is Zero")
+    const num = prompt("Enter the upper limit for even numbers.");
+    for (let i = 0; i <= num ; i += 2){
+        console.log(i)
     }
+
+
 </script>
 </body>
 </html>
