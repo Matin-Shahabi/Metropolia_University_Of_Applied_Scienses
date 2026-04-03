@@ -2,6 +2,7 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Html &amp; Css/website" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/python lab/python-lab-1" vcs="Git" />
   </component>
 </project>
