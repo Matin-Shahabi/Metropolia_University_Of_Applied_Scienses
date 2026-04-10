@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Array</title>
+</head>
+<script>
+    // sort() sorts the array alphabetically
+    // reverse() reverses the items in the array in reverse order
+    // Shift() deletes and returns the 1st item in tha array
+    // pop() deletes and return the last item in the array
+    // push (value) add the value at the end of the array,multiple values separated by comas (,)
+    // includes(value) checks whether the array contains the given value
+    // array.splice(1,0,"new") add or delete in this order (start,count of delete,new value)
+    // array.slice() make a copy of that array
+
+    const arr = [];
+    arr[0] = 1;
+    arr[1] = 2;
+    arr[2] = 3;
+    arr[3] = 4;
+    arr[4] = 5;
+    console.log(arr);
+    const arr2 = [1, 20, 3, 40, 60, 6, 7, 2];
+    console.log(arr2);
+    const frenz = ["Kevin", "Siri", "Alexa"];
+    for (let i = 0; i < frenz.length; i++) {
+        console.log(frenz[i]);
+    }
+    console.log(frenz);
+    console.log(frenz.sort());
+    console.log(arr2.reverse());
+    console.log(arr2.includes(89));
+    arr2.push(67);
+    console.log(arr2);
+    arr2.pop();
+    console.log(arr2);
+    arr2.shift();
+    console.log(arr2);
+    arr2.splice(1,0,33,55);
+    console.log(arr2);
+    const arr3 = arr2.slice();
+    console.log(arr3);
+
+
+
+    const student = {
+        firstName : "Matin",
+        lastName : "Shahabi",
+        studentId : '235678',
+        phone : '44 955 4022',
+        credits : 125,
+        creLeft: function () {return 240-this.credits},
+    }
+
+    console.log('credits Left : ', student.creLeft())
+    console.log(student.firstName);
+    console.log(student["lastName"]);
+    student.firstName = 'Ali';
+    student["lastName"] = "Akbari";
+    console.log(student.lastName);
+    console.log(student["firstName"]);
+
+    const greeting = `Hello, My name is ${student.firstName} ${student.lastName}`;
+    const studentInfo = `student number : ${student.studentId} , Phone number : ${student["phone"]}`;
+    console.log(greeting);
+    console.log(studentInfo);
+    delete student["lastName"];
+    console.log(student);
+    function greet() {
+        console.log("Hello Function of JavaScripts");
+        return;
+    }
+    greet();
+    greet();
+
+    function greeet(text,times){
+        for (let i =1; i <= times ; i++){
+            console.log(text + ' ' + i + ' ' + 'times !');
+        }
+        return;
+    }
+
+    greeet('Hello',5);
+
+
+
+
+
+    let x,y
+    x = parseInt(prompt("Enter number 1 : "))
+    y = parseInt(prompt("Enter number 2 :"))
+    function summ1(x,y) {
+        return x + y;
+    }
+
+    let s = summ1(x,y)
+    console.log(s)
+
+
+
+
+
+    function getFruits() {
+        const fruits = ["Apple","Banana","Mango"];
+        return fruits;
+    }
+    const result = getFruits()
+    console.log(result);
+
+
+
+
+
+
+    function summy() {
+        let count = parseInt(prompt("How many numbers do you want to enter ? "))
+        let sumnum = 0
+        for (let i = 1; i <= count ; i++)
+        {
+            let x
+            x = parseInt(prompt(`Enter number ${i} :`));
+            sumnum += x
+        }
+        console.log(sumnum)
+        return;
+    }
+
+    summy()
+
+
+
+
+
+
+
+    function number(n) {
+        arr1 = []
+        for (let i = 1; i <= n ; i++){
+            arr1.push(i)
+        }
+        return arr1;
+    }
+    let ans = number(10)
+    console.log(ans);
+
+
+
+</script>
+<body>
+</body>
+</html>

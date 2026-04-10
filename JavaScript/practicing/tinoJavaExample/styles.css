@@ -1,0 +1,23 @@
+.red {
+    background-color: #f00;
+}
+
+.blue {
+    background-color: #00f;
+}
+
+body {
+    margin: 0;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    color: white;
+}
+
+form {
+    margin-top: 20px;
+}
+
+input, button {
+    padding: 8px;
+    margin-top: 10px;
+}
