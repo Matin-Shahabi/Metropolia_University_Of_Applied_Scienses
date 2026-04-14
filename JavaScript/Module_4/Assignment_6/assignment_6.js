@@ -16,10 +16,8 @@ form.addEventListener("submit", async (event) => {
 
     const data = await response.json();
 
-    // Clear old results
     resultsDiv.innerHTML = "";
 
-    // Loop through jokes
     data.result.forEach(jokeItem => {
       const article = document.createElement("article");
 
