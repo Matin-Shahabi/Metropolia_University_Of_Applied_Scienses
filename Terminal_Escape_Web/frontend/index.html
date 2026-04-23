@@ -1,87 +1,96 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Terminal Escape - Mankind vs AI</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="static/css/style.css">
+<meta charset="UTF-8">
+<title>Terminal Escape</title>
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+@keyframes floatPlane {
+    0% { transform: translateX(-100px) translateY(0px); opacity: 0; }
+    50% { opacity: 0.15; }
+    100% { transform: translateX(110vw) translateY(-40px); opacity: 0; }
+}
+
+.plane {
+    position: absolute;
+    font-size: 4rem;
+    animation: floatPlane 12s linear infinite;
+}
+</style>
+
 </head>
-<body class="bg-gray-950 text-white min-h-screen">
-    <div class="max-w-2xl mx-auto pt-20 px-6">
-        <div class="text-center mb-12">
-            <h1 class="text-5xl font-bold text-emerald-400 mb-3">TERMINAL ESCAPE</h1>
-            <p class="text-xl text-gray-400">Mankind vs AI</p>
-        </div>
 
-        <div class="bg-gray-900 rounded-3xl p-10 shadow-2xl">
-            <h2 class="text-3xl font-semibold mb-8 text-center">Enter Your Name</h2>
-            
-            <div class="space-y-6">
-                <div>
-                    <label class="block text-sm text-gray-400 mb-2">Player Name</label>
-                    <input id="playerName" type="text" 
-                           class="w-full bg-gray-800 border border-gray-700 rounded-2xl px-6 py-5 text-lg focus:outline-none focus:border-emerald-500"
-                           placeholder="Enter your name...">
-                </div>
+<body class="bg-black text-white overflow-hidden h-screen flex items-center justify-center">
 
-                <button onclick="showStory()" 
-                        class="w-full bg-gray-700 hover:bg-gray-600 transition py-4 rounded-2xl text-lg font-medium flex items-center justify-center gap-2">
-                    📖 Read Game Story
-                </button>
+<!-- ✈️ animated background planes -->
+<div class="plane" style="top:10%">✈️</div>
+<div class="plane" style="top:30%; animation-delay:3s;">✈️</div>
+<div class="plane" style="top:60%; animation-delay:6s;">✈️</div>
 
-                <button onclick="startGame()" 
-                        class="w-full bg-emerald-600 hover:bg-emerald-700 transition py-5 rounded-2xl text-xl font-bold">
-                    START NEW GAME
-                </button>
-            </div>
+<!-- fog overlay -->
+<div class="absolute inset-0 bg-gradient-to-b from-black via-gray-900 to-black opacity-70"></div>
 
-            <div id="message" class="mt-6 text-center text-red-400 font-medium"></div>
-        </div>
+<!-- main UI -->
+<div class="relative z-10 text-center w-full max-w-md">
 
-        <div class="text-center mt-10 text-gray-500 text-sm">
-            Final Project - Software 1 • Metropolia UAS
-        </div>
+    <!-- logo -->
+    <div class="mb-6">
+        <div class="text-6xl animate-bounce">✈️</div>
+        <h1 class="text-5xl font-bold text-emerald-400 tracking-widest">
+            TERMINAL ESCAPE
+        </h1>
+        <p class="text-gray-400 mt-2">Mankind vs AI Surveillance System</p>
     </div>
 
-    <script>
-        function showStory() {
-            alert(`🌍 MANKIND VS AI: THE TERMINAL ESCAPE\n\n` +
-                  `You are humanity's last hope.\n` +
-                  `A powerful AI police force is hunting you relentlessly.\n\n` +
-                  `Your mission: Deliver the final resistance chip to the safe airport on the other side of the world.\n\n` +
-                  `Manage your money and CO₂ carefully.\n` +
-                  `Every flight has a cost — both financial and environmental.\n` +
-                  `The longer you take, the higher the chance the AI will catch you.\n\n` +
-                  `Only strategy, geography knowledge, and smart decisions can save humanity.\n\n` +
-                  `Good luck, pilot.`);
-        }
+    <!-- input -->
+    <input id="name"
+        placeholder="Enter your pilot name"
+        class="w-full px-6 py-4 bg-gray-900 border border-gray-700 rounded-2xl text-center text-lg focus:outline-none focus:border-emerald-500">
 
-        function startGame() {
-            const name = document.getElementById('playerName').value.trim();
-            if (!name) {
-                document.getElementById('message').textContent = "Please enter your name!";
-                return;
-            }
+    <!-- button -->
+    <button onclick="login()"
+        class="mt-6 w-full bg-emerald-600 hover:bg-emerald-700 transition px-6 py-4 rounded-2xl text-xl font-bold shadow-lg">
+        START MISSION
+    </button>
 
-            fetch('/api/auth/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ player_name: name })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    localStorage.setItem('player', JSON.stringify(data.player));
-                    window.location.href = 'game.html';
-                } else {
-                    document.getElementById('message').textContent = data.error || "An error occurred";
-                }
-            })
-            .catch(() => {
-                document.getElementById('message').textContent = "Server connection error";
-            });
-        }
-    </script>
+    <p id="err" class="text-red-400 mt-4"></p>
+
+</div>
+
+<script>
+async function login(){
+    const name = document.getElementById('name').value.trim();
+
+    if(!name){
+        document.getElementById('err').innerText = "Enter your name!";
+        return;
+    }
+
+    const res = await fetch('/api/auth/login',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({player_name:name})
+    });
+
+    const data = await res.json();
+
+    if(data.success){
+        localStorage.setItem('player', JSON.stringify(data.player));
+
+        // ✨ little cinematic transition
+        document.body.style.transition = "all 0.5s";
+        document.body.style.opacity = "0";
+
+        setTimeout(()=>{
+            window.location.href = "menu.html";
+        },500);
+
+    } else {
+        document.getElementById('err').innerText = data.error;
+    }
+}
+</script>
+
 </body>
 </html>

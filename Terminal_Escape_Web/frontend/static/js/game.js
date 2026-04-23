@@ -1,10 +1,15 @@
 let currentSessionId = null;
 let map = null;
+
 let currentMarker = null;
 let safeMarker = null;
+let routeLine = null;
+
+/* ===================== MAP ===================== */
 
 function initMap() {
-    map = L.map('map').setView([32, 53], 5);
+    map = L.map('map').setView([30, 0], 2);
+
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© OpenStreetMap'
     }).addTo(map);
@@ -12,125 +17,318 @@ function initMap() {
 
 function updateMap(current, safe) {
     if (!map) return;
+
     if (currentMarker) map.removeLayer(currentMarker);
     if (safeMarker) map.removeLayer(safeMarker);
+    if (routeLine) map.removeLayer(routeLine);
 
-    currentMarker = L.marker([current.latitude_deg, current.longitude_deg], {
-        icon: L.divIcon({className: 'bg-red-600 text-white w-8 h-8 flex items-center justify-center rounded-full', html: '📍'})
-    }).addTo(map).bindPopup(`<b>Current Location:</b><br>${current.name}`);
+    currentMarker = L.marker([current.latitude_deg, current.longitude_deg])
+        .addTo(map)
+        .bindPopup("📍 " + current.name);
 
-    safeMarker = L.marker([safe.latitude_deg, safe.longitude_deg], {
-        icon: L.divIcon({className: 'bg-emerald-600 text-white w-8 h-8 flex items-center justify-center rounded-full', html: '🏁'})
-    }).addTo(map).bindPopup(`<b>Safe Airport:</b><br>${safe.name}`);
+    safeMarker = L.marker([safe.latitude_deg, safe.longitude_deg])
+        .addTo(map)
+        .bindPopup("🏁 " + safe.name);
 
-    map.fitBounds([[current.latitude_deg, current.longitude_deg], [safe.latitude_deg, safe.longitude_deg]], {padding: [50, 50]});
+    routeLine = L.polyline(
+        [
+            [current.latitude_deg, current.longitude_deg],
+            [safe.latitude_deg, safe.longitude_deg]
+        ],
+        {
+            color: "cyan",
+            weight: 4,
+            opacity: 0.8,
+            dashArray: "10,10"
+        }
+    ).addTo(map);
+
+    map.fitBounds(routeLine.getBounds(), { padding: [50, 50] });
 }
+
+/* ===================== UI STATUS ===================== */
 
 function updateStatus(state) {
     document.getElementById('gameStatus').innerHTML = `
-        <div class="grid grid-cols-2 gap-4 text-sm">
-            <div>Round: <span class="font-bold text-emerald-400">${state.round}</span></div>
-            <div>Money: <span class="font-bold">$${state.money.toLocaleString()}</span></div>
-            <div>CO₂: <span class="font-bold">${state.co2}</span></div>
-            <div>Distance to Safe: <span class="font-bold">${state.distance_to_safe_km} km</span></div>
-            <div>Police Risk: <span class="font-bold text-red-400">${state.police_chance_percent}%</span></div>
-            <div>Safe Flight Chance: <span class="font-bold text-emerald-400">${state.flight_availability_percent}%</span></div>
+        <div class="grid grid-cols-2 gap-3 text-sm">
+
+            <div>Round: <span class="text-emerald-400 font-bold">${state.round}</span></div>
+            <div>Money: <span class="text-yellow-400 font-bold">$${state.money}</span></div>
+            <div>CO₂: <span class="text-orange-400 font-bold">${state.co2}</span></div>
+
+            <div>From: <span class="text-red-400">${state.current_airport.name}</span></div>
+            <div>To: <span class="text-emerald-400">${state.safe_airport.name}</span></div>
+
+            <div>Police Risk: <span class="text-red-500">${state.police_chance_percent}%</span></div>
+            <div>Flight Chance: <span class="text-blue-400">${state.flight_availability_percent}%</span></div>
+
         </div>
     `;
 }
 
+/* ===================== FLIGHTS ===================== */
+
 function showFlights(flights) {
     const container = document.getElementById('flightsList');
-    container.innerHTML = '<p class="text-gray-400 mb-4 font-medium">Available Flights:</p>';
+    container.innerHTML = "";
 
-    flights.forEach(flight => {
-        const moneyCost = Math.floor(Math.random() * 1400) + 450;
-        const co2Cost = Math.floor(moneyCost * 0.4);
+    flights.forEach(f => {
+        const div = document.createElement("div");
 
-        const div = document.createElement('div');
-        div.className = 'flight-option bg-gray-800 hover:bg-gray-700 p-6 rounded-3xl cursor-pointer border border-gray-700';
-        div.innerHTML = `
-            <div class="flex justify-between items-center">
-                <div>
-                    <div class="font-semibold">${flight.name}</div>
-                    <div class="text-xs text-gray-400">${flight.ident}</div>
-                </div>
-                <div class="text-right">
-                    <div class="text-emerald-400 font-bold text-2xl">$${moneyCost}</div>
-                    <div class="text-orange-400">${co2Cost} CO₂</div>
-                </div>
-            </div>
-        `;
-        div.onclick = () => makeMove(flight.ident);
+        div.className = "bg-gray-800 p-4 rounded-xl cursor-pointer hover:bg-gray-700 transition";
+        div.innerHTML = `✈️ ${f.name}`;
+
+        div.onclick = () => makeMove(f.ident);
+
         container.appendChild(div);
     });
 }
 
-async function makeMove(selectedIdent) {
-    const res = await fetch('/api/game/move', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ session_id: currentSessionId, selected_ident: selectedIdent })
-    });
-    const data = await res.json();
+/* ===================== AIRPLANE FX ===================== */
 
-    if (data.success) {
-        if (data.game_over) {
-            const msg = data.result === 'won' ? "🎉 Congratulations! You reached the safe airport!" :
-                        data.result === 'caught' ? "💀 You were caught by the police!" : "💀 You ran out of resources!";
-            alert(msg + `\n\nRounds played: ${data.game_state.round}`);
-            window.location.href = 'index.html';
-            return;
-        }
+function airplaneFX() {
+    const plane = document.getElementById("planeHUD");
 
-        currentSessionId = data.game_state.session_id;
-        updateStatus(data.game_state);
-        showFlights(data.available_flights);
-        updateMap(data.game_state.current_airport, data.game_state.safe_airport);
-    } else {
-        alert(data.error || "An error occurred");
-    }
+    if (!plane) return;
+
+    plane.classList.remove("fly");
+    void plane.offsetWidth;
+    plane.classList.add("fly");
 }
 
+/* ===================== POLICE CINEMATIC ===================== */
+
+async function policeScan() {
+
+    return new Promise(resolve => {
+
+        let i = 0;
+
+        const overlay = document.createElement("div");
+        overlay.className = "ai-overlay";
+        overlay.innerText = "🚓 AI Searching... 0/10";
+
+        document.body.appendChild(overlay);
+
+        const interval = setInterval(() => {
+
+            overlay.innerText = `🚓 AI Searching... ${i}/10`;
+            i++;
+
+            if (i > 10) {
+                clearInterval(interval);
+                overlay.remove();
+                resolve();
+            }
+
+        }, 300);
+    });
+}
+
+/* ===================== MAIN MOVE ===================== */
+
+async function makeMove(selectedIdent) {
+
+    // ✈️ + 🚓 cinematic start
+    airplaneFX();
+    await policeScan();
+
+    const res = await fetch('/api/game/move', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            session_id: currentSessionId,
+            selected_ident: selectedIdent
+        })
+    });
+
+    const data = await res.json();
+
+    if (!data.success) {
+        alert(data.error || "Error");
+        return;
+    }
+
+    /* ===================== GAME OVER ===================== */
+
+    if (data.game_over) {
+
+        /* ===================== CAUGHT BY AI ===================== */
+        if (data.result === "caught") {
+    
+            const overlay = document.createElement("div");
+    
+            overlay.className = `
+                fixed inset-0 bg-black flex flex-col items-center justify-center text-center z-50
+            `;
+    
+            overlay.innerHTML = `
+                <div class="text-red-500 text-6xl mb-4 animate-pulse">🚓 CAUGHT</div>
+    
+                <div class="text-white text-2xl mb-6">
+                    You have been detected by the AI surveillance system.
+                </div>
+    
+                <div class="text-gray-300 mb-6">
+                    Your flight path was analyzed...  
+                    <br>
+                    Escape attempt failed.
+                </div>
+    
+                <div class="text-red-400 text-xl mb-8">
+                    “Resistance is futile.”
+                </div>
+    
+                <button onclick="window.location.href='menu.html'"
+                    class="bg-red-600 px-8 py-3 rounded-2xl">
+                    Back to Safe House
+                </button>
+            `;
+    
+            document.body.appendChild(overlay);
+    
+            return;
+        }
+    
+        /* ===================== WIN ===================== */
+        else if (data.result === "won") {
+    
+            const overlay = document.createElement("div");
+    
+            overlay.className = `
+                fixed inset-0 bg-black flex flex-col items-center justify-center text-center z-50
+            `;
+    
+            overlay.innerHTML = `
+                <div class="text-6xl mb-4">🏁 MISSION COMPLETE</div>
+    
+                <div class="text-emerald-400 text-2xl mb-6">
+                    You successfully escaped the AI surveillance system.
+                </div>
+    
+                <div class="text-gray-300 mb-6">
+                    Humanity’s last hope has reached safety.
+                    <br>
+                    The resistance chip has been delivered.
+                </div>
+    
+                <div class="text-yellow-400 text-xl mb-8">
+                    ✈️ Well flown, pilot.
+                </div>
+    
+                <button onclick="window.location.href='menu.html'"
+                    class="bg-emerald-600 px-8 py-3 rounded-2xl text-white">
+                    Return to Base
+                </button>
+            `;
+    
+            document.body.appendChild(overlay);
+    
+            return;
+        }
+    
+        /* ===================== RESOURCE LOSS ===================== */
+        else if (data.result === "lost_resources") {
+    
+            const overlay = document.createElement("div");
+    
+            overlay.className = `
+                fixed inset-0 bg-black flex flex-col items-center justify-center text-center z-50
+            `;
+    
+            overlay.innerHTML = `
+                <div class="text-yellow-500 text-6xl mb-4">💥 CRASHED</div>
+    
+                <div class="text-white text-2xl mb-6">
+                    Your aircraft ran out of resources mid-flight.
+                </div>
+    
+                <div class="text-gray-300 mb-6">
+                    Fuel / CO₂ / Budget exhausted.<br>
+                    The journey ended prematurely.
+                </div>
+    
+                <div class="text-yellow-400 text-xl mb-8">
+                    “No fuel. No future.”
+                </div>
+    
+                <button onclick="window.location.href='menu.html'"
+                    class="bg-yellow-600 px-8 py-3 rounded-2xl">
+                    Try Again
+                </button>
+            `;
+    
+            document.body.appendChild(overlay);
+    
+            return;
+        }
+    
+        return;
+    }
+
+    /* ===================== CONTINUE GAME ===================== */
+
+    currentSessionId = data.game_state.session_id;
+
+    updateStatus(data.game_state);
+    showFlights(data.available_flights);
+    updateMap(data.game_state.current_airport, data.game_state.safe_airport);
+}
+
+/* ===================== MENU ===================== */
+
 function showLeaderboards() {
-    window.location.href = 'leaderboard.html';
+    window.location.href = "leaderboard.html";
 }
 
 function quitGame() {
-    if (confirm("Are you sure you want to quit the game? Your progress will be saved.")) {
-        alert("✅ Game saved. Thank you for playing!");
-        window.location.href = 'index.html';
-    }
+    window.location.href = "menu.html";
 }
 
-window.onload = async () => {
-    const player = JSON.parse(localStorage.getItem('player'));
-    if (!player) return window.location.href = 'index.html';
+function story(){
+    document.getElementById("storyModal").classList.remove("hidden");
+    document.getElementById("storyModal").classList.add("flex");
+}
 
-    document.getElementById('playerInfo').innerHTML = `Player: <span class="text-emerald-400">${player.player_name}</span>`;
+function closeStory(){
+    document.getElementById("storyModal").classList.add("hidden");
+    document.getElementById("storyModal").classList.remove("flex");
+}
+/* ===================== INIT ===================== */
+
+window.onload = async () => {
+
+    const player = JSON.parse(localStorage.getItem("player"));
+
+    if (!player) {
+        window.location.href = "index.html";
+        return;
+    }
 
     initMap();
 
     let res = await fetch('/api/game/continue', {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ player_id: player.player_id })
     });
+
     let data = await res.json();
 
     if (!data.success) {
+
         res = await fetch('/api/game/new', {
             method: 'POST',
-            headers: {'Content-Type': 'application/json'},
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ player_id: player.player_id })
         });
+
         data = await res.json();
     }
 
-    if (data.success) {
-        currentSessionId = data.session_id || data.game_state.session_id;
-        updateStatus(data.game_state);
-        showFlights(data.available_flights);
-        updateMap(data.game_state.current_airport, data.game_state.safe_airport);
-    }
+    currentSessionId = data.session_id || data.game_state.session_id;
+
+    updateStatus(data.game_state);
+    showFlights(data.available_flights);
+    updateMap(data.game_state.current_airport, data.game_state.safe_airport);
 };
