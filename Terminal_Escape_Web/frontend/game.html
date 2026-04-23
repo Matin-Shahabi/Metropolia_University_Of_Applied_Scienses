@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terminal Escape - Game</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="static/css/style.css">
+    <style>#map { height: 420px; }</style>
+</head>
+<body class="bg-gray-950 text-white">
+    <div class="max-w-6xl mx-auto p-6">
+        <div class="flex justify-between items-center mb-8">
+            <h1 class="text-4xl font-bold text-emerald-400">TERMINAL ESCAPE</h1>
+            <div class="flex gap-4">
+                <button onclick="showLeaderboards()" 
+                        class="bg-yellow-600 hover:bg-yellow-700 px-6 py-3 rounded-2xl transition flex items-center gap-2">
+                    🏆 Leaderboard
+                </button>
+                <button onclick="quitGame()" 
+                        class="bg-red-600 hover:bg-red-700 px-6 py-3 rounded-2xl transition flex items-center gap-2">
+                    Quit Game
+                </button>
+            </div>
+        </div>
+
+        <div id="playerInfo" class="text-right mb-6 text-emerald-400 font-medium"></div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <!-- Status & Flights -->
+            <div class="lg:col-span-5 space-y-6">
+                <div class="bg-gray-900 rounded-3xl p-8">
+                    <h2 class="text-2xl font-semibold mb-6">Current Status</h2>
+                    <div id="gameStatus" class="space-y-5"></div>
+                </div>
+
+                <div class="bg-gray-900 rounded-3xl p-8">
+                    <h2 class="text-2xl font-semibold mb-6">Available Flights</h2>
+                    <div id="flightsList" class="space-y-4"></div>
+                </div>
+            </div>
+
+            <!-- Map -->
+            <div class="lg:col-span-7">
+                <div class="bg-gray-900 rounded-3xl p-8">
+                    <h2 class="text-2xl font-semibold mb-6">Flight Map</h2>
+                    <div id="map"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="static/js/game.js"></script>
+</body>
+</html>

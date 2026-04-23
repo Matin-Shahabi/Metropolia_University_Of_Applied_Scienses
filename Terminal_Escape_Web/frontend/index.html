@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terminal Escape - Mankind vs AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="static/css/style.css">
+</head>
+<body class="bg-gray-950 text-white min-h-screen">
+    <div class="max-w-2xl mx-auto pt-20 px-6">
+        <div class="text-center mb-12">
+            <h1 class="text-5xl font-bold text-emerald-400 mb-3">TERMINAL ESCAPE</h1>
+            <p class="text-xl text-gray-400">Mankind vs AI</p>
+        </div>
+
+        <div class="bg-gray-900 rounded-3xl p-10 shadow-2xl">
+            <h2 class="text-3xl font-semibold mb-8 text-center">Enter Your Name</h2>
+            
+            <div class="space-y-6">
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">Player Name</label>
+                    <input id="playerName" type="text" 
+                           class="w-full bg-gray-800 border border-gray-700 rounded-2xl px-6 py-5 text-lg focus:outline-none focus:border-emerald-500"
+                           placeholder="Enter your name...">
+                </div>
+
+                <button onclick="showStory()" 
+                        class="w-full bg-gray-700 hover:bg-gray-600 transition py-4 rounded-2xl text-lg font-medium flex items-center justify-center gap-2">
+                    📖 Read Game Story
+                </button>
+
+                <button onclick="startGame()" 
+                        class="w-full bg-emerald-600 hover:bg-emerald-700 transition py-5 rounded-2xl text-xl font-bold">
+                    START NEW GAME
+                </button>
+            </div>
+
+            <div id="message" class="mt-6 text-center text-red-400 font-medium"></div>
+        </div>
+
+        <div class="text-center mt-10 text-gray-500 text-sm">
+            Final Project - Software 1 • Metropolia UAS
+        </div>
+    </div>
+
+    <script>
+        function showStory() {
+            alert(`🌍 MANKIND VS AI: THE TERMINAL ESCAPE\n\n` +
+                  `You are humanity's last hope.\n` +
+                  `A powerful AI police force is hunting you relentlessly.\n\n` +
+                  `Your mission: Deliver the final resistance chip to the safe airport on the other side of the world.\n\n` +
+                  `Manage your money and CO₂ carefully.\n` +
+                  `Every flight has a cost — both financial and environmental.\n` +
+                  `The longer you take, the higher the chance the AI will catch you.\n\n` +
+                  `Only strategy, geography knowledge, and smart decisions can save humanity.\n\n` +
+                  `Good luck, pilot.`);
+        }
+
+        function startGame() {
+            const name = document.getElementById('playerName').value.trim();
+            if (!name) {
+                document.getElementById('message').textContent = "Please enter your name!";
+                return;
+            }
+
+            fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ player_name: name })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    localStorage.setItem('player', JSON.stringify(data.player));
+                    window.location.href = 'game.html';
+                } else {
+                    document.getElementById('message').textContent = data.error || "An error occurred";
+                }
+            })
+            .catch(() => {
+                document.getElementById('message').textContent = "Server connection error";
+            });
+        }
+    </script>
+</body>
+</html>
