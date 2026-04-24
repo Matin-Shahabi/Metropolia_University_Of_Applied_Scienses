@@ -43,7 +43,13 @@ def new_game():
         'flight_availability': flight_availability
     })
     
-    flights = get_available_flights(game.current, game.safe_airport, game.flight_availability, 1)
+    flights = get_available_flights(
+        game.current,
+        game.safe_airport,
+        game.flight_availability,
+        1,
+        game.pressure
+    )
     
     return jsonify({
         "success": True,
@@ -66,7 +72,13 @@ def continue_game():
         return jsonify({"error": "No unfinished game found for this player"}), 404
     
     game = GameSession(session_data)
-    flights = get_available_flights(game.current, game.safe_airport, game.flight_availability, game.round_no)
+    flights = get_available_flights(
+        game.current,
+        game.safe_airport,
+        game.flight_availability,
+        game.round_no,
+        game.pressure
+    )
     
     return jsonify({
         "success": True,
@@ -147,8 +159,13 @@ def make_move():
         })
     
     # Continue game
-    new_flights = get_available_flights(game.current, game.safe_airport, game.flight_availability, game.round_no)
-    
+    new_flights = get_available_flights(
+        game.current,
+        game.safe_airport,
+        game.flight_availability,
+        game.round_no,
+        game.pressure
+    )    
     return jsonify({
         "success": True,
         "game_over": False,

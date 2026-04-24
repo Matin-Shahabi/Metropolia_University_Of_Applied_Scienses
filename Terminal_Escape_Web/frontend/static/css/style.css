@@ -1,10 +1,15 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-body {
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+#planeHUD.fly {
+    transform: translateX(-200px);
+    opacity: 1;
+    animation: flyAnim 1.2s ease-in-out;
 }
+
+
 
 .flight-option {
     transition: all 0.3s ease;
@@ -15,7 +20,56 @@ body {
     box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.3);
 }
 
+
 #map {
-    border-radius: 16px;
-    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.2);
+    position: relative;
+    z-index: 1;
+}
+
+.ai-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 28px;
+    color: white;
+    z-index: 99999;
+}
+
+body {
+    background:#05070f;
+    color:white;
+    font-family:system-ui;
+}
+
+/* airplane floating background */
+#planeHUD {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    font-size: 40px;
+    opacity: 0;
+}
+
+#planeHUD.fly {
+    animation: fly 1.2s ease-in-out;
+}
+
+@keyframes fly {
+    0% {transform: translateX(200px); opacity:0;}
+    30% {opacity:1;}
+    100% {transform: translateX(-300px); opacity:0;}
+}
+
+/* police cinematic effect */
+body.red {
+    background:red !important;
+    transition:0.2s;
+}
+
+body.blue {
+    background:blue !important;
+    transition:0.2s;
 }

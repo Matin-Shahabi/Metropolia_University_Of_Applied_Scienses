@@ -36,29 +36,42 @@ def get_closer_airports(current, airports, safe_airport):
     random.shuffle(closer)
     return closer
 
-def get_available_flights(current, safe_airport, flight_availability, round_no):
+def get_available_flights(current, safe_airport, flight_availability, round_no, pressure=0):
+
     airports = get_large_airports()
     options = []
-    
-    # Safe airport after round 3
-    if round_no >= 3 and random.random() < flight_availability:
-        if safe_airport not in options:
-            options.append(safe_airport)
-    
-    # Closer airports
-    closer = get_closer_airports(current, airports, safe_airport)
+
+    # 🚫 exclude safe airport at start
+    candidates = [
+        a for a in airports
+        if a["ident"] != current["ident"]
+        and a["ident"] != safe_airport["ident"]
+    ]
+
+    # ✈️ closer airports
+    closer = get_closer_airports(current, candidates, safe_airport)
+
     for airport in closer:
-        if airport not in options and len(options) < Config.MAX_FLIGHT_OPTIONS:
+        if len(options) < Config.MAX_FLIGHT_OPTIONS:
             options.append(airport)
-    
-    # Fill remaining
-    if len(options) < Config.MAX_FLIGHT_OPTIONS:
-        remaining = [a for a in airports if a not in options and a["ident"] != current["ident"]]
-        if round_no < 3:
-            remaining = [a for a in remaining if a["ident"] != safe_airport["ident"]]
-        random.shuffle(remaining)
-        options.extend(remaining[:Config.MAX_FLIGHT_OPTIONS - len(options)])
-    
+
+    # 🌍 fill remaining slots
+    remaining = [a for a in candidates if a not in options]
+    random.shuffle(remaining)
+
+    options.extend(remaining[:Config.MAX_FLIGHT_OPTIONS - len(options)])
+
+    # 🧠 AI decision engine
+    safe_probability = flight_availability + (pressure * 0.5)
+
+    can_show_safe = (
+        round_no >= 3 and
+        random.random() < safe_probability
+    )
+
+    if can_show_safe:
+        options.append(safe_airport)
+
     random.shuffle(options)
     return options[:Config.MAX_FLIGHT_OPTIONS]
 
@@ -97,6 +110,7 @@ class GameSession:
         self.round_no = session_data.get('round_no', 1)
         self.police_chance = session_data.get('police_chance', Config.POLICE_CATCH_START)
         self.flight_availability = session_data.get('flight_availability', 0.1)
+        self.pressure = session_data.get('pressure', 0.0)
         self.total_distance = session_data.get('final_distance_traveled', 0) or 0
 
     def get_full_state(self):
@@ -133,6 +147,19 @@ class GameSession:
         self.current = selected
         self.round_no += 1
 
+
+        # 🎯 AI pressure system
+        distance_to_safe = get_distance(
+            self.current['latitude_deg'], self.current['longitude_deg'],
+            self.safe_airport['latitude_deg'], self.safe_airport['longitude_deg']
+        )
+
+        max_distance = 20000  # normalize
+
+        proximity = 1 - min(distance_to_safe / max_distance, 1)
+
+        self.pressure = min(1.0, self.pressure * 0.7 + proximity * 0.3)
+
         # Update flight availability (better if closer)
         old_dist = get_distance(
             old_current['latitude_deg'], old_current['longitude_deg'],
@@ -145,8 +172,10 @@ class GameSession:
 
         if new_dist < old_dist:
             improvement = (old_dist - new_dist) / old_dist
-            self.flight_availability = min(Config.FLIGHT_AVAILABILITY_MAX, 
-                                         self.flight_availability + improvement * 0.45)
+            self.flight_availability = min(
+                Config.FLIGHT_AVAILABILITY_MAX,
+                0.1 + self.pressure * 0.6
+            )
 
         # Increase police chance
         self.police_chance = min(Config.POLICE_CATCH_MAX, 
