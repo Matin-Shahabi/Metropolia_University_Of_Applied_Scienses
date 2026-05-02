@@ -5,6 +5,30 @@ let currentMarker = null;
 let safeMarker = null;
 let routeLine = null;
 
+
+
+/* ===================== BACKGROUND ===================== */
+
+const bgImage = document.getElementById("bg-image");
+
+function changeBG(src) {
+    if (!bgImage) return;
+
+    bgImage.style.opacity = 0;
+
+    setTimeout(() => {
+        bgImage.src = src;
+        bgImage.style.opacity = 0.85;
+    }, 200);
+}
+
+function setIdleBG() {
+    changeBG("images/1.jpg"); // عکس عادی
+}
+
+function setSelectedBG() {
+    changeBG("images/2.jpeg"); // عکس کلیک
+}
 /* ===================== MAP ===================== */
 
 function initMap() {
@@ -100,6 +124,8 @@ function airplaneFX() {
 
 async function policeScan() {
 
+    setSelectedBG()
+
     return new Promise(resolve => {
 
         let i = 0;
@@ -128,6 +154,8 @@ async function policeScan() {
 /* ===================== MAIN MOVE ===================== */
 
 async function makeMove(selectedIdent) {
+    setSelectedBG();
+    
 
     // ✈️ + 🚓 cinematic start
     airplaneFX();
@@ -184,7 +212,7 @@ async function makeMove(selectedIdent) {
                     Back to Safe House
                 </button>
             `;
-    
+            
             document.body.appendChild(overlay);
     
             return;
@@ -273,6 +301,8 @@ async function makeMove(selectedIdent) {
     updateStatus(data.game_state);
     showFlights(data.available_flights);
     updateMap(data.game_state.current_airport, data.game_state.safe_airport);
+
+    setIdleBG();
 }
 
 /* ===================== MENU ===================== */
@@ -306,6 +336,8 @@ window.onload = async () => {
     }
 
     initMap();
+    setIdleBG();
+
 
     let res = await fetch('/api/game/continue', {
         method: 'POST',

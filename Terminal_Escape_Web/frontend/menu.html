@@ -4,153 +4,165 @@
 <meta charset="UTF-8">
 <title>Main Menu</title>
 <script src="https://cdn.tailwindcss.com"></script>
+<style>
+    body {
+        background-image: url('images/menuair.jpg');   /* ← اینجا آدرس عکس خودت رو بذار */
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        position: relative;
+    }
+
+    /* لایه تاریک روی عکس برای اینکه متن و دکمه‌ها واضح‌تر باشن */
+    body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.75);   /* هر چی عدد بیشتر → تیره‌تر و کمتر واضح */
+        z-index: -1;
+    }
+
+    .content {
+        position: relative;
+        z-index: 10;
+    }
+</style>
 </head>
+<body class="text-white flex items-center justify-center min-h-screen">
 
-<body class="bg-gray-950 text-white flex items-center justify-center h-screen">
-
-    <div class="text-center">
-
-        <h1 class="text-5xl text-emerald-400 mb-4">✈️ TERMINAL ESCAPE</h1>
-
-        <p id="welcome" class="mb-6 text-xl"></p>
-
-        <div id="buttons" class="space-y-4"></div>
-
+<div class="content text-center px-6 py-8">
+    <h1 class="text-5xl text-emerald-400 mb-4">✈️ TERMINAL ESCAPE</h1>
+    <p id="welcome" class="mb-10 text-xl"></p>
+    
+    <!-- دکمه‌ها -->
+    <div id="buttons" class="flex flex-wrap justify-center gap-5 max-w-6xl mx-auto">
+        <!-- دکمه‌ها توسط جاوااسکریپت اضافه می‌شوند -->
     </div>
-    <div id="storyModal" class="fixed inset-0 bg-black bg-opacity-80 hidden items-center justify-center z-50">
+</div>
 
-        <div class="bg-gray-900 p-8 rounded-3xl max-w-lg text-center">
-    
-            <h2 class="text-2xl text-emerald-400 mb-4">📖 Story</h2>
-    
-            <p class="text-gray-300 leading-relaxed">
-                🌍 Humanity is under control of an AI system.<br><br>
-                You are a pilot trying to escape surveillance while delivering a critical package.<br><br>
-                Every flight matters. Every decision changes your fate.<br><br>
-                If the AI catches you… it's over.
-            </p>
-    
-            <button onclick="closeStory()"
-                class="mt-6 bg-red-600 px-6 py-2 rounded-xl">
-                Close
-            </button>
-    
+<!-- مدال‌ها (Story و Score) بدون تغییر -->
+<div id="storyModal" class="fixed inset-0 bg-black bg-opacity-80 hidden items-center justify-center z-50">
+    <div class="bg-gray-900 p-8 rounded-3xl max-w-lg text-center">
+        <h2 class="text-2xl text-emerald-400 mb-4">📖 Story</h2>
+        <p class="text-gray-300 leading-relaxed">
+            🌍 Humanity is under control of an AI system.<br><br>
+            You are a pilot trying to escape surveillance while delivering a critical package.<br><br>
+            Every flight matters. Every decision changes your fate.<br><br>
+            If the AI catches you… it's over.
+        </p>
+        <button onclick="closeStory()" 
+                class="mt-6 bg-red-600 hover:bg-red-700 px-8 py-3 rounded-xl transition">
+            Close
+        </button>
+    </div>
+</div>
+
+<div id="scoreModal" class="fixed inset-0 bg-black bg-opacity-80 hidden items-center justify-center z-50">
+    <div class="bg-gray-900 p-8 rounded-3xl w-96 text-center">
+        <h2 class="text-2xl text-purple-400 mb-4">📊 My Score</h2>
+        <div id="scoreContent" class="text-gray-300 space-y-3">
+            Loading...
         </div>
-    
+        <button onclick="closeScore()" 
+                class="mt-6 bg-red-600 hover:bg-red-700 px-8 py-3 rounded-xl transition">
+            Close
+        </button>
     </div>
-    <div id="scoreModal" class="fixed inset-0 bg-black bg-opacity-80 hidden items-center justify-center z-50">
+</div>
 
-        <div class="bg-gray-900 p-8 rounded-3xl w-96 text-center">
+<script>
+const player = JSON.parse(localStorage.getItem('player'));
+if(!player) window.location.href="index.html";
+
+document.getElementById('welcome').innerText = `Welcome ${player.player_name}`;
+
+async function init(){
+    const res = await fetch('/api/game/continue', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({player_id: player.player_id})
+    });
     
-            <h2 class="text-2xl text-purple-400 mb-4">📊 My Score</h2>
-    
-            <div id="scoreContent" class="text-gray-300 space-y-3">
-                Loading...
-            </div>
-    
-            <button onclick="closeScore()"
-                class="mt-6 bg-red-600 px-6 py-2 rounded-xl">
-                Close
-            </button>
-    
-        </div>
-    
-    </div>
-    <script>
-        const player = JSON.parse(localStorage.getItem('player'));
+    const data = await res.json();
+    const box = document.getElementById('buttons');
 
-        if(!player) window.location.href="index.html";
+    if(data.success){
+        box.innerHTML += `
+            <button onclick="resume()" 
+                    class="bg-yellow-600 hover:bg-yellow-500 px-12 py-6 rounded-3xl text-xl font-semibold transition-all w-60">
+                Resume Last Game
+            </button>`;
+    }
 
-        document.getElementById('welcome').innerText =
-            `Welcome ${player.player_name}`;
+    box.innerHTML += `
+        <button onclick="newGame()" 
+                class="bg-emerald-600 hover:bg-emerald-500 px-12 py-6 rounded-3xl text-xl font-semibold transition-all w-60">
+            New Game
+        </button>
+        <button onclick="story()" 
+                class="bg-gray-700 hover:bg-gray-600 px-12 py-6 rounded-3xl text-xl font-semibold transition-all w-60">
+            Story
+        </button>
+        <button onclick="leader()" 
+                class="bg-blue-600 hover:bg-blue-500 px-12 py-6 rounded-3xl text-xl font-semibold transition-all w-60">
+            Leaderboard
+        </button>
+        <button onclick="score()" 
+                class="bg-purple-600 hover:bg-purple-500 px-12 py-6 rounded-3xl text-xl font-semibold transition-all w-60">
+            My Score
+        </button>
+        <button onclick="quit()" 
+                class="bg-red-600 hover:bg-red-500 px-12 py-6 rounded-3xl text-xl font-semibold transition-all w-60">
+            Quit
+        </button>
+    `;
+}
 
-        async function init(){
+function newGame(){ window.location.href="game.html"; }
+function resume(){ window.location.href="game.html"; }
+function story(){
+    document.getElementById("storyModal").classList.remove("hidden");
+    document.getElementById("storyModal").classList.add("flex");
+}
+function closeStory(){
+    document.getElementById("storyModal").classList.add("hidden");
+    document.getElementById("storyModal").classList.remove("flex");
+}
+function leader(){ window.location.href="leaderboard.html"; }
 
-            const res = await fetch('/api/game/continue',{
-                method:'POST',
-                headers:{'Content-Type':'application/json'},
-                body:JSON.stringify({player_id:player.player_id})
-            });
+async function score(){
+    const res = await fetch(`/api/player/stats?player_id=${player.player_id}`);
+    const data = await res.json();
+    if(!data.success){
+        alert("No data found");
+        return;
+    }
+    const s = data.personal_bests;
+    document.getElementById("scoreContent").innerHTML = `
+        🏆 Best CO₂: <b>${s.best_co2 ?? 0}</b><br>
+        💰 Best Money Used: <b>${s.best_money ?? 0}</b><br>
+        ⚡ Fastest Rounds: <b>${s.fastest_rounds ?? 0}</b><br>
+        🎮 Total Wins: <b>${s.total_won_games ?? 0}</b>
+    `;
+    document.getElementById("scoreModal").classList.remove("hidden");
+    document.getElementById("scoreModal").classList.add("flex");
+}
 
-            const data = await res.json();
+function closeScore(){
+    document.getElementById("scoreModal").classList.add("hidden");
+    document.getElementById("scoreModal").classList.remove("flex");
+}
 
-            const box = document.getElementById('buttons');
+function quit(){
+    localStorage.clear();
+    window.location.href="index.html";
+}
 
-            // Resume
-            if(data.success){
-                box.innerHTML += `
-                <button onclick="resume()" class="bg-yellow-600 px-8 py-3 rounded-2xl w-full">
-                Resume Last Game</button>`;
-            }
-
-            box.innerHTML += `
-            <button onclick="newGame()" class="bg-emerald-600 px-8 py-3 rounded-2xl w-full">New Game</button>
-            <button onclick="story()" class="bg-gray-700 px-8 py-3 rounded-2xl w-full">Story</button>
-            <button onclick="leader()" class="bg-blue-600 px-8 py-3 rounded-2xl w-full">Leaderboard</button>
-            <button onclick="score()" class="bg-purple-600 px-8 py-3 rounded-2xl w-full">My Score</button>
-            <button onclick="quit()" class="bg-red-600 px-8 py-3 rounded-2xl w-full">Quit</button>
-            `;
-        }
-
-        function newGame(){
-            window.location.href="game.html";
-        }
-
-        function resume(){
-            window.location.href="game.html";
-        }
-
-        function story(){
-            document.getElementById("storyModal").classList.remove("hidden");
-            document.getElementById("storyModal").classList.add("flex");
-        }
-
-        function closeStory(){
-            document.getElementById("storyModal").classList.add("hidden");
-            document.getElementById("storyModal").classList.remove("flex");
-        }
-
-        function leader(){
-            window.location.href="leaderboard.html";
-        }
-
-        async function score(){
-
-            const res = await fetch(`/api/player/stats?player_id=${player.player_id}`);
-            const data = await res.json();
-
-            if(!data.success){
-                alert("No data found");
-                return;
-            }
-
-            const s = data.personal_bests;
-
-            document.getElementById("scoreContent").innerHTML = `
-                🏆 Best CO₂: <b>${s.best_co2 ?? 0}</b><br>
-                💰 Best Money Used: <b>${s.best_money ?? 0}</b><br>
-                ⚡ Fastest Rounds: <b>${s.fastest_rounds ?? 0}</b><br>
-                🎮 Total Wins: <b>${s.total_won_games ?? 0}</b>
-            `;
-
-            document.getElementById("scoreModal").classList.remove("hidden");
-            document.getElementById("scoreModal").classList.add("flex");
-            }
-
-
-        function closeScore(){
-            document.getElementById("scoreModal").classList.add("hidden");
-            document.getElementById("scoreModal").classList.remove("flex");
-        }
-
-        function quit(){
-            localStorage.clear();
-            window.location.href="index.html";
-        }
-
-        init();
-    </script>
-    
-
+init();
+</script>
 </body>
 </html>
