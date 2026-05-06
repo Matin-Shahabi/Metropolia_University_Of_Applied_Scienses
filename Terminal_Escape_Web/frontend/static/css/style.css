@@ -62,7 +62,6 @@ body {
     font-family:system-ui;
 }
 
-/* airplane floating background */
 #planeHUD {
     position: fixed;
     top: 20px;
@@ -81,7 +80,6 @@ body {
     100% {transform: translateX(-300px); opacity:0;}
 }
 
-/* police cinematic effect */
 body.red {
     background:red !important;
     transition:0.2s;

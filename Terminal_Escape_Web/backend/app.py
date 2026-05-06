@@ -12,10 +12,8 @@ def create_app():
     app.config.from_object(Config)
     CORS(app, resources={r"/api/*": {"origins": "*"}})
     
-    # Initialize Database
     init_db()
 
-    # Register Blueprints
     from routes.auth import auth_bp
     from routes.game import game_bp
     from routes.player import player_bp
@@ -24,7 +22,6 @@ def create_app():
     app.register_blueprint(game_bp, url_prefix='/api/game')
     app.register_blueprint(player_bp, url_prefix='/api/player')
 
-    # Serve frontend files
     @app.route('/')
     def home():
         return send_from_directory('../frontend', 'index.html')

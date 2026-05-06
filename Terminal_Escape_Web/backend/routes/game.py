@@ -97,8 +97,7 @@ def make_move():
     if not session_id or not selected_ident:
         return jsonify({"error": "session_id and selected_ident are required"}), 400
     
-    # Load session
-    cursor = get_cursor()  # از services.db
+    cursor = get_cursor() 
     cursor.execute("SELECT * FROM player_game_sessions WHERE session_id = %s AND status = 'in_progress'", (session_id,))
     session_data = cursor.fetchone()
     
@@ -111,7 +110,6 @@ def make_move():
     if error:
         return jsonify({"error": error}), 400
     
-    # Save state
     save_game_state(
         session_id=game.session_id,
         current_airport=game.current['ident'],
@@ -122,7 +120,6 @@ def make_move():
         flight_availability=game.flight_availability
     )
     
-    # Check win
     if game.current['ident'] == game.safe_airport['ident']:
         final_co2 = Config.START_CO2 - game.co2
         final_money = Config.START_MONEY - game.money
@@ -134,7 +131,6 @@ def make_move():
             "game_state": game.get_full_state()
         })
     
-    # Check resource loss
     if game.money <= 0 or game.co2 <= 0:
         final_co2 = Config.START_CO2 - game.co2
         final_money = Config.START_MONEY - game.money
@@ -146,7 +142,6 @@ def make_move():
             "game_state": game.get_full_state()
         })
     
-    # Police turn
     if police_turn(game.current, game.police_chance):
         final_co2 = Config.START_CO2 - game.co2
         final_money = Config.START_MONEY - game.money
@@ -158,7 +153,6 @@ def make_move():
             "game_state": game.get_full_state()
         })
     
-    # Continue game
     new_flights = get_available_flights(
         game.current,
         game.safe_airport,
