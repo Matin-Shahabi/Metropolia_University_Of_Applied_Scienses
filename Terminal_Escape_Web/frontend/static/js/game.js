@@ -23,11 +23,11 @@ function changeBG(src) {
 }
 
 function setIdleBG() {
-    changeBG("images/1.jpg"); // عکس عادی
+    changeBG("images/1.jpg"); 
 }
 
 function setSelectedBG() {
-    changeBG("images/2.jpeg"); // عکس کلیک
+    changeBG("images/2.jpeg"); 
 }
 /* ===================== MAP ===================== */
 
@@ -157,7 +157,6 @@ async function makeMove(selectedIdent) {
     setSelectedBG();
     
 
-    // ✈️ + 🚓 cinematic start
     airplaneFX();
     await policeScan();
 

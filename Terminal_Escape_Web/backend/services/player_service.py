@@ -60,7 +60,6 @@ def finish_game_session(session_id, status, final_co2_used, final_money_used, fi
     """, (status, final_co2_used, final_money_used, final_rounds, final_distance, session_id))
     commit()
 
-    # Update player stats
     cursor.execute("SELECT player_id FROM player_game_sessions WHERE session_id = %s", (session_id,))
     result = cursor.fetchone()
     if result:

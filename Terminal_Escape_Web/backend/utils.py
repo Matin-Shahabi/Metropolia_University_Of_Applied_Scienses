@@ -5,7 +5,7 @@ def get_distance(lat1, lon1, lat2, lon2):
     Calculates the great-circle distance between two points using Haversine formula.
     Returns distance in kilometers.
     """
-    R = 6371  # Earth radius in km
+    R = 6371  
     lat1, lon1, lat2, lon2 = map(math.radians, [lat1, lon1, lat2, lon2])
     
     dlat = lat2 - lat1

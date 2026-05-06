@@ -6,7 +6,7 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
     body {
-        background-image: url('images/menuair.jpg');   /* ← اینجا آدرس عکس خودت رو بذار */
+        background-image: url('images/menuair.jpg');   
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
@@ -14,7 +14,6 @@
         position: relative;
     }
 
-    /* لایه تاریک روی عکس برای اینکه متن و دکمه‌ها واضح‌تر باشن */
     body::before {
         content: '';
         position: fixed;
@@ -22,7 +21,7 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(0, 0, 0, 0.75);   /* هر چی عدد بیشتر → تیره‌تر و کمتر واضح */
+        background: rgba(0, 0, 0, 0.75);   
         z-index: -1;
     }
 
@@ -38,22 +37,69 @@
     <h1 class="text-5xl text-emerald-400 mb-4">✈️ TERMINAL ESCAPE</h1>
     <p id="welcome" class="mb-10 text-xl"></p>
     
-    <!-- دکمه‌ها -->
     <div id="buttons" class="flex flex-wrap justify-center gap-5 max-w-6xl mx-auto">
-        <!-- دکمه‌ها توسط جاوااسکریپت اضافه می‌شوند -->
     </div>
 </div>
 
-<!-- مدال‌ها (Story و Score) بدون تغییر -->
 <div id="storyModal" class="fixed inset-0 bg-black bg-opacity-80 hidden items-center justify-center z-50">
     <div class="bg-gray-900 p-8 rounded-3xl max-w-lg text-center">
         <h2 class="text-2xl text-emerald-400 mb-4">📖 Story</h2>
-        <p class="text-gray-300 leading-relaxed">
-            🌍 Humanity is under control of an AI system.<br><br>
-            You are a pilot trying to escape surveillance while delivering a critical package.<br><br>
-            Every flight matters. Every decision changes your fate.<br><br>
-            If the AI catches you… it's over.
-        </p>
+        <div class="max-w-3xl mx-auto text-gray-300 leading-relaxed space-y-6">
+
+            <p class="text-lg">
+              🌍 <span class="text-white font-semibold">Set on a dark, rain-soaked night</span>, you are humanity’s final hope. 
+              The enemy? <span class="text-red-400 font-semibold">An AI-powered global police force</span> hunting you relentlessly.
+            </p>
+          
+            <p>
+              As your engine roars to life on the misty runway, alarms echo inside the AI command center. 
+              Endless data streams track <span class="text-white">one fugitive human—you</span>.
+            </p>
+          
+            <div class="border-l-4 border-cyan-400 pl-4 italic text-gray-400">
+              Hidden in your suitcase lies the last hope of humanity:
+              <span class="text-cyan-300">a next-generation survival chip</span>.
+            </div>
+          
+            <p>
+              The AI has <span class="text-red-400">limitless intelligence and resources</span>.  
+              You have only your <span class="text-white">wits, geography skills, and limited cash</span>.
+            </p>
+          
+            <p>
+              Every move matters. Every mile leaves a <span class="text-green-400">CO₂ trace</span>.  
+              Meanwhile, the AI learns and adapts <span class="text-yellow-300">in real-time</span>.
+            </p>
+          
+            <div class="bg-gray-800/50 p-4 rounded-xl border border-gray-700">
+              ⚠️ <span class="font-semibold text-white">The AI is watching.</span><br>
+              You have a decision to make.
+            </div>
+          
+            <p>
+              Move too fast, and you burn resources.  
+              Move too slow, and <span class="text-red-400">you get caught</span>.
+            </p>
+          
+            <p class="text-center text-lg font-semibold text-white">
+              Every decision counts.
+            </p>
+          
+            <p>
+              Only those who master <span class="text-cyan-300">strategy, timing, and precision</span> 
+              will reach the final escape.
+            </p>
+          
+            <div class="text-center pt-4 border-t border-gray-700">
+              <p class="text-xl font-bold text-white">
+                Mankind vs AI: The Terminal Escape
+              </p>
+              <p class="text-red-400 mt-2">
+                One wrong move... and humanity is lost.
+              </p>
+            </div>
+          
+          </div>
         <button onclick="closeStory()" 
                 class="mt-6 bg-red-600 hover:bg-red-700 px-8 py-3 rounded-xl transition">
             Close

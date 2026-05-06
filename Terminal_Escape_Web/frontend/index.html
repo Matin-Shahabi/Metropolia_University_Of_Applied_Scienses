@@ -28,10 +28,8 @@
 <div class="plane" style="top:30%; animation-delay:3s;">✈️</div>
 <div class="plane" style="top:60%; animation-delay:6s;">✈️</div>
 
-<!-- fog overlay -->
 <div class="absolute inset-0 bg-gradient-to-b from-black via-gray-900 to-black opacity-70"></div>
 
-<!-- main UI -->
 <div class="relative z-10 text-center w-full max-w-md">
 
     <!-- logo -->
@@ -78,7 +76,6 @@ async function login(){
     if(data.success){
         localStorage.setItem('player', JSON.stringify(data.player));
 
-        // ✨ little cinematic transition
         document.body.style.transition = "all 0.5s";
         document.body.style.opacity = "0";
 

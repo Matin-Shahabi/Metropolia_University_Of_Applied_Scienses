@@ -41,27 +41,23 @@ def get_available_flights(current, safe_airport, flight_availability, round_no, 
     airports = get_large_airports()
     options = []
 
-    # 🚫 exclude safe airport at start
     candidates = [
         a for a in airports
         if a["ident"] != current["ident"]
         and a["ident"] != safe_airport["ident"]
     ]
 
-    # ✈️ closer airports
     closer = get_closer_airports(current, candidates, safe_airport)
 
     for airport in closer:
         if len(options) < Config.MAX_FLIGHT_OPTIONS:
             options.append(airport)
 
-    # 🌍 fill remaining slots
     remaining = [a for a in candidates if a not in options]
     random.shuffle(remaining)
 
     options.extend(remaining[:Config.MAX_FLIGHT_OPTIONS - len(options)])
 
-    # 🧠 AI decision engine
     safe_probability = flight_availability + (pressure * 0.5)
 
     can_show_safe = (
@@ -97,7 +93,7 @@ def police_turn(current_airport, police_chance):
             return True
     return False
 
-# ====================== GameSession Class (بهبود یافته) ======================
+# ====================== GameSession Class  ======================
 
 class GameSession:
     def __init__(self, session_data):
@@ -148,19 +144,17 @@ class GameSession:
         self.round_no += 1
 
 
-        # 🎯 AI pressure system
         distance_to_safe = get_distance(
             self.current['latitude_deg'], self.current['longitude_deg'],
             self.safe_airport['latitude_deg'], self.safe_airport['longitude_deg']
         )
 
-        max_distance = 20000  # normalize
+        max_distance = 20000  
 
         proximity = 1 - min(distance_to_safe / max_distance, 1)
 
         self.pressure = min(1.0, self.pressure * 0.7 + proximity * 0.3)
 
-        # Update flight availability (better if closer)
         old_dist = get_distance(
             old_current['latitude_deg'], old_current['longitude_deg'],
             self.safe_airport['latitude_deg'], self.safe_airport['longitude_deg']
@@ -177,7 +171,6 @@ class GameSession:
                 0.1 + self.pressure * 0.6
             )
 
-        # Increase police chance
         self.police_chance = min(Config.POLICE_CATCH_MAX, 
                                self.police_chance + Config.POLICE_CATCH_INCREMENT)
 
